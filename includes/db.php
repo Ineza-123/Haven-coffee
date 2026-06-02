@@ -4,16 +4,17 @@ $host = getenv('DB_HOST') ?: ($_ENV['DB_HOST'] ?? '127.0.0.1');
 $user = getenv('DB_USER') ?: ($_ENV['DB_USER'] ?? 'root');
 $pass = getenv('DB_PASS') ?: ($_ENV['DB_PASS'] ?? '');
 $db   = getenv('DB_NAME') ?: ($_ENV['DB_NAME'] ?? 'haven_coffee');
+$port = getenv('DB_PORT') ?: ($_ENV['DB_PORT'] ?? '3306');
 
 // On Vercel, localhost/127.0.0.1 will never work.
 if (($host == 'localhost' || $host == '127.0.0.1') && getenv('VERCEL')) {
-    die("<h1>Database Config Missing</h1><p>Vercel detected, but no <b>DB_HOST</b> found. <br>Please add <b>DB_HOST, DB_USER, DB_PASS, DB_NAME</b> to your <b>Vercel Project Settings > Environment Variables</b>.</p>");
+    die("<h1>Database Config Missing</h1><p>Vercel detected, but no <b>DB_HOST</b> found. <br>Please add <b>DB_HOST, DB_USER, DB_PASS, DB_PORT, DB_NAME</b> to your <b>Vercel Project Settings > Environment Variables</b>.</p>");
 }
 
 try {
-    $conn = mysqli_connect($host, $user, $pass, $db);
+    $conn = mysqli_connect($host, $user, $pass, $db, $port);
 } catch (mysqli_sql_exception $e) {
-    die("<h1>Database Error</h1><p>Could not connect to: <b>$host</b></p><p>Error: " . $e->getMessage() . "</p>");
+    die("<h1>Database Error</h1><p>Could not connect to: <b>$host</b> on port <b>$port</b></p><p>Error: " . $e->getMessage() . "</p>");
 }
 
 if (!$conn) {
